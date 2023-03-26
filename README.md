@@ -1,2 +1,2 @@
 # THRenderer
-Shader for Toho project
+Shader for Touhou project
