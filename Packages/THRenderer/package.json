@@ -1,0 +1,27 @@
+{
+  "name": "com.zknight.threnderer",
+  "version": "1.0.0",
+  "description": "Shaders in cartoon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZSaltedFish/THRenderer.git"
+  },
+  "keywords": [
+    "shader",
+    "cartoon"
+  ],
+  "author": "zknight",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZSaltedFish/THRenderer/issues"
+  },
+  "homepage": "https://github.com/ZSaltedFish/THRenderer#readme",
+  "displayName": "TH Renderer",
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "1.0.0"
+  }
+}
