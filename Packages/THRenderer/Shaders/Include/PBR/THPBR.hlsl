@@ -85,42 +85,32 @@ float4 PBRFragment(Varyings input) : SV_TARGET
     
     float roughness = max(1 - smoothness, 0.05);
     float3 baseColor = mainColor * mainTex.rgb;
-    float F0 = lerp(0.04, baseColor, metallic);
+    float3 F0 = lerp(0.04, baseColor, metallic);
     float shadow = mainLight.shadowAttenuation * mainLight.distanceAttenuation;
-
+    
     float3 direLight = DirectionLightFunction(roughness, F0, mainLight.color, HdotN, NdotL, NdotV, HdotL);
     float3 diffuseLight = DiffuseLightFunction(HdotL, NdotL, baseColor, mainLight.color, metallic, shadow, F0);
-    float3 environment = ReflectEEnvironment(roughness, N);
+    
+    uint additionLightCount = GetAdditionalLightsCount();
+    for (int i = 0; i < additionLightCount; ++i)
+    {
+        Light additionalLight = GetAdditionalLight(i, surface.position);
+        L = normalize(additionalLight.direction);
+        H = normalize(L + V);
+        HdotN = max(dot(H, N), 1e-5);
+        HdotL = max(dot(H, L), 1e-5);
+        NdotL = max(dot(N, L), 1e-5);
+        direLight += DirectionLightFunction(roughness, F0, additionalLight.color, HdotN, NdotL, NdotV, HdotL);
+        diffuseLight += DiffuseLightFunction(HdotL, NdotL, baseColor, additionalLight.color, metallic, shadow, F0);
+    }
 
+    float3 environment = ReflectEEnvironment(roughness, N);
     float3 indireLight = IndireDiff_Function(NdotV, N, metallic, baseColor, roughness, 1, F0, environment);
     float3 indireSpecLight = IndireSpec_Function(environment, roughness, NdotV, 1.0, F0);
     
     float3 dLight = direLight + diffuseLight;
     float3 indLight = indireLight + indireSpecLight;
     return float4(dLight + indLight, 1);
-    /*roughness *= (1.7 - 0.7 * roughness) * 0.98;
-    roughness += 0.02;
-    metallic = 1 - metallic;
-    metallic *= 0.98;
-
-
-    float a2 = roughness * roughness;
-    float d = D_GGX_Custom(a2, HdotN);
-    float g = G_Function(NdotL, NdotV, roughness);
-
-    float3 f0 = F0_Function(mainColor.rgb + environment, metallic);
-    float3 f = FresnelSchlick(HdotL, f0);
-    //float specular = lerp(0.04, mainLight.color, metallic);
-
-    //float3 f = environment * LocalFresnel(NdotL, 0.04, smoothness) + mainColor * mainTex;
-    float3 bpdfSpecSection = (d * g) * f / (4 * NdotL * NdotV);
-    float3 directSpecColor = bpdfSpecSection * mainLight.color * NdotL * PI;
-    */
-
-    //return float4(f, 1);
-    //float3 color = GenericLight(mainLight, surface);
-
-    //return float4(color, 1);
 }
 
 #endif

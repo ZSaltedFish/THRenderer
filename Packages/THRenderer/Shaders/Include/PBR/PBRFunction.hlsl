@@ -47,7 +47,7 @@ float2 LUT_Approx(float roughness, float NoV)
     return saturate(AB);
 }
 
-float3 DirectionLightFunction(float roughness, float F0, float3 mainLightColor, float NdotH, float NdotL, float NdotV, float HdotL)
+float3 DirectionLightFunction(float roughness, float3 F0, float3 mainLightColor, float NdotH, float NdotL, float NdotV, float HdotL)
 {
     float D = D_Function(NdotH, roughness);
     float G = PBR_G_Function(NdotL, NdotV, roughness);
@@ -56,7 +56,7 @@ float3 DirectionLightFunction(float roughness, float F0, float3 mainLightColor, 
     return BRDFSpeSection * mainLightColor * NdotL * PI;
 }
 
-float3 DiffuseLightFunction(float HdotL, float NdotL, float3 baseColor, float3 mainLightColor, float metallic, float shadow, float F0)
+float3 DiffuseLightFunction(float HdotL, float NdotL, float3 baseColor, float3 mainLightColor, float metallic, float shadow, float3 F0)
 {
     float3 KS = PBR_F_Light_Function(HdotL, F0);
     float3 KD = (1 - KS) * (1 - metallic);
