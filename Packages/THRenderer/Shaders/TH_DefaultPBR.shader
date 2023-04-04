@@ -4,6 +4,7 @@ Shader "THRenderer/DefaultPBR"
     {
         _Color ("Color", color) = (1, 1, 1, 1)
         _MainTex ("Input Texture", 2D) = "white" {}
+        _PBRTex("PBR Texture", 2D) = "white" {}
         _Smoothness ("Smoothness", range(0, 1)) = 0.5
         _Metallic ("Metallic", range(0, 1)) = 0
 
@@ -32,6 +33,9 @@ Shader "THRenderer/DefaultPBR"
 
             HLSLPROGRAM
             #pragma multi_compile_instancing
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma shader_feature_local _PBR_TEXTURE_USED
             #pragma shader_feature_local _CLIPPING
             #include "Include/PBR/THPBR.hlsl"
             #pragma vertex PBRVertex
@@ -76,4 +80,6 @@ Shader "THRenderer/DefaultPBR"
             ENDHLSL
         }
     }
+
+    CustomEditor "ZKnight.THRenderer.Editor.THRenderPBREditor"
 }

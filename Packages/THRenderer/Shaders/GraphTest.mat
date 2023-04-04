@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: GraphTest
   m_Shader: {fileID: 4800000, guid: 3f6818c8aea3c1743a87252fff74b3de, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -17,6 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -49,7 +52,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c9d50ed8c70fc614087a49ad30804fe6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MeSmoo:
@@ -70,6 +73,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PBRTex:
+        m_Texture: {fileID: 2800000, guid: d1bad1a91a3a90b45a2bbe80c46d467e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
@@ -114,7 +121,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0.78
+    - _Metallic: 1
     - _Noise01Power: 0.75
     - _Noise02Power: 0.3
     - _OcclusionStrength: 1
@@ -126,7 +133,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ScatteringPower: 10
-    - _Smoothness: 0.85
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _Softness: 0.25
     - _SpecularHighlights: 1
