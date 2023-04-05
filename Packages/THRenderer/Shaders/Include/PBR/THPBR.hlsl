@@ -3,8 +3,6 @@
 
 #include "..\\THCommon.hlsl"
 #include "..\\TH_IO_Define.hlsl"
-#include "PBRFunction.hlsl"
-#include "PBRDefine.hlsl"
 
 TEXTURE2D(_MainTex);
 SAMPLER(sampler_MainTex);
@@ -47,70 +45,16 @@ Varyings PBRVertex(Attributes input)
     return output;
 }
 
-float3 ReflectEEnvironment(float roughness, float3 normalWS)
-{
-    float3 environment = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, normalWS, 0.0).rgb;
-    environment /= roughness * roughness + 1.0;
-    return environment;
-}
+#include "PBRCartoon.hlsl"
+#include "PBRFunction.hlsl"
+#include "PBRDefine.hlsl"
 
 float4 PBRFragment(Varyings input) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(input);
-    float3 mainColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
-    float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
-#if _PBR_TEXTURE_USED
-    float3 pbrTex = SAMPLE_TEXTURE2D(_PBRTex, sampler_PBRTex, input.uv).rgb;
-    float smoothness = pbrTex.r;
-    float metallic = pbrTex.g;
-#else
-    float smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Smoothness);
-    float metallic = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Metallic);
-#endif
-    float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
-    Light mainLight = GetMainLight(shadowCoord);
-    
-    float3 ambient = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
-    float3 L = normalize(mainLight.direction);
-    float3 N = normalize(input.normalWS);
-    float3 V = normalize(input.viewDirWS);
-    float3 H = normalize(L + V);
-
-    LitSurfaceX surface = GetLitSurface(N, input.positionWS.xyz, V, mainColor * mainTex.rgb, smoothness);
-
-    float HdotN = max(dot(H, N), 1e-5);
-    float HdotL = max(dot(H, L), 1e-5);
-    float NdotL = max(dot(N, L), 1e-5);
-    float NdotV = max(dot(N, V), 1e-5);
-    
-    float roughness = max(1 - smoothness, 0.05);
-    float3 baseColor = mainColor * mainTex.rgb;
-    float3 F0 = lerp(0.04, baseColor, metallic);
-    float shadow = mainLight.shadowAttenuation * mainLight.distanceAttenuation;
-    
-    float3 direLight = DirectionLightFunction(roughness, F0, mainLight.color, HdotN, NdotL, NdotV, HdotL);
-    float3 diffuseLight = DiffuseLightFunction(HdotL, NdotL, baseColor, mainLight.color, metallic, shadow, F0);
-    
-    uint additionLightCount = GetAdditionalLightsCount();
-    for (int i = 0; i < additionLightCount; ++i)
-    {
-        Light additionalLight = GetAdditionalLight(i, surface.position);
-        L = normalize(additionalLight.direction);
-        H = normalize(L + V);
-        HdotN = max(dot(H, N), 1e-5);
-        HdotL = max(dot(H, L), 1e-5);
-        NdotL = max(dot(N, L), 1e-5);
-        direLight += DirectionLightFunction(roughness, F0, additionalLight.color, HdotN, NdotL, NdotV, HdotL);
-        diffuseLight += DiffuseLightFunction(HdotL, NdotL, baseColor, additionalLight.color, metallic, shadow, F0);
-    }
-
-    float3 environment = ReflectEEnvironment(roughness, N);
-    float3 indireLight = IndireDiff_Function(NdotV, N, metallic, baseColor, roughness, 1, F0, environment);
-    float3 indireSpecLight = IndireSpec_Function(environment, roughness, NdotV, 1.0, F0);
-    
-    float3 dLight = direLight + diffuseLight;
-    float3 indLight = indireLight + indireSpecLight;
-    return float4(dLight + indLight, 1);
+    PBRCartoon cartoon = GetPBRCartoon(input);
+    float3 lightColor = CartoonPBRRender(cartoon);
+    return float4(lightColor, 1);
 }
 
 #endif

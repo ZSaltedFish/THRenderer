@@ -63,9 +63,9 @@ float3 DiffuseLightFunction(float HdotL, float NdotL, float3 baseColor, float3 m
     return KD * baseColor * mainLightColor * NdotL * shadow;
 }
 
-float3 IndireDiff_Function(float NdotV, float3 N, float metallic, float3 baseColor, float roughness, float occlusion, float3 F0, float3 envColor)
+float3 IndireDiff_Function(float NdotV, float3 N, float metallic, float3 baseColor, float roughness, float occlusion, float3 F0, float3 ambient)
 {
-    float3 SHColor = envColor;
+    float3 SHColor = ambient;
     float3 KS = PBR_F_IndireLight_Function(NdotV, roughness, F0);
     float3 KD = (1 - KS) * (1 - metallic);
     return SHColor * KD * baseColor * occlusion;
@@ -76,6 +76,55 @@ float3 IndireSpec_Function(float3 envColor, float roughness, float NdotV, float 
     float2 LUT = LUT_Approx(roughness, NdotV);
     float3 indireLight = PBR_F_IndireLight_Function(NdotV, roughness, F0);
     float3 factor = envColor * (indireLight * LUT.r + LUT.g);
-    return factor;
+    return factor * occlusion;
+}
+
+float3 ReflectEEnvironment(float roughness, float3 normalWS)
+{
+    float3 environment = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, normalWS, 0.0).rgb;
+    environment /= roughness * roughness + 1.0;
+    return environment;
+}
+
+float3 DirectionLightCalc(PBRCartoon cartoon, Light light, float3 N, float3 V, float3 NdotV)
+{
+    float3 L = normalize(light.direction);
+    float3 H = normalize(L + V);
+    float HdotN = max(dot(H, N), 1e-5);
+    float HdotL = max(dot(H, L), 1e-5);
+    float NdotL = max(dot(N, L), 1e-5);
+
+    float shadow = light.shadowAttenuation * light.distanceAttenuation;
+    float3 direLight = DirectionLightFunction(cartoon.roughness, cartoon.F0, light.color, HdotN, NdotL, NdotV, HdotL);
+    float3 diffuseLight = DiffuseLightFunction(HdotL, NdotL, cartoon.baseColor, light.color, cartoon.metallic, shadow, cartoon.F0);
+
+    return direLight + diffuseLight;
+}
+
+float3 CartoonPBRRender(PBRCartoon cartoon)
+{
+    float3 ambient = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
+    
+    float3 N = normalize(cartoon.normal);
+    float3 V = normalize(cartoon.viewDir);
+    
+    float NdotV = max(dot(N, V), 1e-5);
+    float3 envColor = ReflectEEnvironment(cartoon.roughness, N);
+    float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, 1.0, cartoon.F0, ambient);
+    float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, 1.0, cartoon.F0);
+    
+    float4 shadowCoord = TransformWorldToShadowCoord(cartoon.position);
+    Light mainLight = GetMainLight(shadowCoord);
+
+    float3 direLight = DirectionLightCalc(cartoon, mainLight, N, V, NdotV);
+    uint additionLightCount = GetAdditionalLightsCount();
+    for (int i = 0; i < additionLightCount; ++i)
+    {
+        Light additionalLight = GetAdditionalLight(i, cartoon.position);
+        direLight += DirectionLightCalc(cartoon, additionalLight, N, V, NdotV);
+    }
+    
+    return direLight + indireLight + indireSpecLight;
+
 }
 #endif
