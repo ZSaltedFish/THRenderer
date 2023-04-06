@@ -113,6 +113,7 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
     float3 envColor = ReflectEEnvironment(cartoon.roughness, N);
     float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, 1.0, cartoon.F0, ambient);
     float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, 1.0, cartoon.F0);
+    float3 fresnel = CartoonFresnel(ambient, NdotV, cartoon.cartoonFresnel);
     
     float4 shadowCoord = TransformWorldToShadowCoord(cartoon.position);
     Light mainLight = GetMainLight(shadowCoord);
@@ -125,7 +126,7 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
         direLight += DirectionLightCalc(cartoon, additionalLight, N, V, NdotV);
     }
     
-    return direLight + indireLight + indireSpecLight;
+    return direLight + indireLight + indireSpecLight + fresnel;
 
 }
 #endif

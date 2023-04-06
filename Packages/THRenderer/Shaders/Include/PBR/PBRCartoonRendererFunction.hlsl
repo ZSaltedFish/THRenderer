@@ -18,4 +18,8 @@ float3 CartoonDiffuseEasy(float NdotL, float shadow)
     return SAMPLE_TEXTURE2D(_ShadowTex, sampler_ShadowTex, float2(0, yUV)).rgb;
 }
 
+float3 CartoonFresnel(float3 color, float NdotV, float fresnelPower)
+{
+    return color * pow(1 - NdotV, fresnelPower);
+}
 #endif

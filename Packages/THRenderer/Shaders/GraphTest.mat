@@ -110,6 +110,7 @@ Material:
     - _AlphaCutoff: 0.5
     - _Blend: 0
     - _BumpScale: 1
+    - _CartoonFresnel: 2
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Clipping: 0

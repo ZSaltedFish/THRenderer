@@ -28,6 +28,7 @@ namespace ZKnight.THRenderer.Editor
                 _ = materialEditor.ColorProperty(_materialProps["_Color"], "Main Color");
                 _ = materialEditor.TextureProperty(_materialProps["_MainTex"], "Main Texture");
                 _ = materialEditor.TextureProperty(_materialProps["_ShadowTex"], "Shadow Texture");
+                _ = materialEditor.FloatProperty(_materialProps["_CartoonFresnel"], "Cartoon Fresnel");
             }
 
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))

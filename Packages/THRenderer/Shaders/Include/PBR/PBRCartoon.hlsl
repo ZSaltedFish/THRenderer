@@ -11,6 +11,7 @@ struct PBRCartoon
     float roughness;
     float metallic;
     float smoothness;
+    float cartoonFresnel;
 };
 
 PBRCartoon GetPBRCartoon(Varyings input)
@@ -36,6 +37,7 @@ PBRCartoon GetPBRCartoon(Varyings input)
     cartoon.roughness = max(1 - smoothness, 0.05);
     cartoon.metallic = metallic;
     cartoon.smoothness = smoothness;
+    cartoon.cartoonFresnel = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CartoonFresnel);
     cartoon.F0 = lerp(0.04.xxx, cartoon.baseColor.rgb, metallic);
     
     return cartoon;

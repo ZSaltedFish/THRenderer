@@ -1,4 +1,4 @@
-Shader "THRenderer/DefaultPBR"
+Shader "THRenderer/THLight"
 {
     Properties
     {
@@ -8,6 +8,7 @@ Shader "THRenderer/DefaultPBR"
         _PBRTex("PBR Texture", 2D) = "white" {}
         _Smoothness ("Smoothness", range(0, 1)) = 0.5
         _Metallic ("Metallic", range(0, 1)) = 0
+        _CartoonFresnel ("Cartoon Fresnel", float) = 5
 
         _OutlineColor ("Outlinee Color", color) = (0, 0, 0, 1)
         _OutlineSize ("Out line size", float) = 1
