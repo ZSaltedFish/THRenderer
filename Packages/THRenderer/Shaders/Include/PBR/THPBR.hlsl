@@ -6,6 +6,8 @@
 
 TEXTURE2D(_MainTex);
 SAMPLER(sampler_MainTex);
+TEXTURE2D(_ShadowTex);
+SAMPLER(sampler_ShadowTex);
 
 #if _PBR_TEXTURE_USED
 TEXTURE2D(_PBRTex);
@@ -14,6 +16,7 @@ SAMPLER(sampler_PBRTex);
 
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
 UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
+UNITY_DEFINE_INSTANCED_PROP(float4, _ShadowTex_ST)
 UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 UNITY_DEFINE_INSTANCED_PROP(float, _CutOff)
 #if _PBR_TEXTURE_USED
@@ -46,15 +49,20 @@ Varyings PBRVertex(Attributes input)
 }
 
 #include "PBRCartoon.hlsl"
+#include "PBRCartoonRendererFunction.hlsl"
 #include "PBRFunction.hlsl"
-#include "PBRDefine.hlsl"
 
 float4 PBRFragment(Varyings input) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(input);
     PBRCartoon cartoon = GetPBRCartoon(input);
+    
+#if defined(_CLIPPING)
+    float cutoff = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CutOff);
+    clip(cartoon.baseColor.a - cutoff);
+#endif
     float3 lightColor = CartoonPBRRender(cartoon);
-    return float4(lightColor, 1);
+    return float4(lightColor, cartoon.baseColor.a);
 }
 
 #endif

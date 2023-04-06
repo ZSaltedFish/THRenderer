@@ -60,7 +60,8 @@ float3 DiffuseLightFunction(float HdotL, float NdotL, float3 baseColor, float3 m
 {
     float3 KS = PBR_F_Light_Function(HdotL, F0);
     float3 KD = (1 - KS) * (1 - metallic);
-    return KD * baseColor * mainLightColor * NdotL * shadow;
+    float3 cartoonDiff = CartoonDiffuseEasy(NdotL, shadow);
+    return KD * baseColor * mainLightColor * cartoonDiff;
 }
 
 float3 IndireDiff_Function(float NdotV, float3 N, float metallic, float3 baseColor, float roughness, float occlusion, float3 F0, float3 ambient)

@@ -4,6 +4,7 @@ Shader "THRenderer/DefaultPBR"
     {
         _Color ("Color", color) = (1, 1, 1, 1)
         _MainTex ("Input Texture", 2D) = "white" {}
+        _ShadowTex("Shadow Texture", 2D) = "gray" {}
         _PBRTex("PBR Texture", 2D) = "white" {}
         _Smoothness ("Smoothness", range(0, 1)) = 0.5
         _Metallic ("Metallic", range(0, 1)) = 0

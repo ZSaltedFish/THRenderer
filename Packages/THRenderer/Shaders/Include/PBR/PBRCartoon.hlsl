@@ -36,7 +36,7 @@ PBRCartoon GetPBRCartoon(Varyings input)
     cartoon.roughness = max(1 - smoothness, 0.05);
     cartoon.metallic = metallic;
     cartoon.smoothness = smoothness;
-    cartoon.F0 = lerp(0.04.xxx, cartoon.baseColor, metallic);
+    cartoon.F0 = lerp(0.04.xxx, cartoon.baseColor.rgb, metallic);
     
     return cartoon;
 }
