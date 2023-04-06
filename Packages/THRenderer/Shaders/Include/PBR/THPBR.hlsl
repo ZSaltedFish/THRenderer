@@ -33,7 +33,7 @@ THVaryings PBRVertex(THAttributes input)
     THVaryings output = (THVaryings) 0;
 
     UNITY_SETUP_INSTANCE_ID(input);
-    UNITY_TRANSFER_INSTANCE_ID(intput, output);
+    UNITY_TRANSFER_INSTANCE_ID(input, output);
     float3 positionWS = TransformObjectToWorld(input.positionOS);
     float4 positionCS = TransformWorldToHClip(positionWS);
     output.positionCS = positionCS;
