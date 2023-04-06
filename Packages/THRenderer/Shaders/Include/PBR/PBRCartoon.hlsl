@@ -14,7 +14,7 @@ struct PBRCartoon
     float cartoonFresnel;
 };
 
-PBRCartoon GetPBRCartoon(Varyings input)
+PBRCartoon GetPBRCartoon(THVaryings input)
 {
     PBRCartoon cartoon = (PBRCartoon) 0;
     float4 mainColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);

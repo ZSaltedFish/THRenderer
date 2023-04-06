@@ -32,9 +32,9 @@ UNITY_DEFINE_INSTANCED_PROP(float4, _OutlineColor)
 UNITY_DEFINE_INSTANCED_PROP(float, _OutlineSize)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 
-Varyings OutlineVertex(Attributes input)
+THVaryings OutlineVertex(THAttributes input)
 {
-    Varyings output = (Varyings)0;
+    THVaryings output = (THVaryings) 0;
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_TRANSFER_INSTANCE_ID(input, output);
 
@@ -64,7 +64,7 @@ Varyings OutlineVertex(Attributes input)
     return output;
 }
 
-float4 OutlineFragment(Varyings input) : SV_TARGET
+float4 OutlineFragment(THVaryings input) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(input);
     float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);

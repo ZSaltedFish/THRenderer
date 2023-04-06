@@ -2,7 +2,7 @@
 #define TH_IO_DEFINE_INCLUDED
 
 #include "THCommon.hlsl"
-struct Attributes
+struct THAttributes
 {
     float4 positionOS   : POSITION;
     float3 normalOS     : NORMAL;
@@ -11,7 +11,7 @@ struct Attributes
     float2 texcoord     : TEXCOORD0;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
-struct Varyings
+struct THVaryings
 {
     float2 uv           : TEXCOORD0;
     float4 positionWS   : TEXCOORD1;
@@ -23,19 +23,6 @@ struct Varyings
     float4 color        : TEXCOORD6;
     
     UNITY_VERTEX_INPUT_INSTANCE_ID
-};
-
-struct Surface
-{
-    float3 normal;
-    float3 color;
-    float alpha;
-#if defined(_PBR_SHADER)
-    float metallic;
-    float smoothness;
-#endif
-    float3 viewDirection;
-    float3 position;
 };
 
 #endif

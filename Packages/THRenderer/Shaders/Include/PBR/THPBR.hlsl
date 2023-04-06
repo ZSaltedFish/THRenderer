@@ -28,9 +28,9 @@ UNITY_DEFINE_INSTANCED_PROP(float, _Metallic)
 #endif
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 
-Varyings PBRVertex(Attributes input)
+THVaryings PBRVertex(THAttributes input)
 {
-    Varyings output = (Varyings)0;
+    THVaryings output = (THVaryings) 0;
 
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_TRANSFER_INSTANCE_ID(intput, output);
@@ -53,7 +53,7 @@ Varyings PBRVertex(Attributes input)
 #include "PBRCartoonRendererFunction.hlsl"
 #include "PBRFunction.hlsl"
 
-float4 PBRFragment(Varyings input) : SV_TARGET
+float4 PBRFragment(THVaryings input) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(input);
     PBRCartoon cartoon = GetPBRCartoon(input);
