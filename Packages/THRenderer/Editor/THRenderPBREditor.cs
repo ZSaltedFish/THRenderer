@@ -102,9 +102,9 @@ namespace ZKnight.THRenderer.Editor
                     {
                         mat.DisableKeyword(keyword);
                     }
+                    EditorUtility.SetDirty(mat);
                 }
             }
-
             return key;
         }
 

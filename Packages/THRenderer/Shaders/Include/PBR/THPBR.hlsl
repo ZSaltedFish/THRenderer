@@ -42,7 +42,7 @@ THVaryings PBRVertex(THAttributes input)
     output.tangentWS = float4(TransformObjectToWorldNormal(input.tangentOS.xyz), 1);
     output.viewDirWS = GetWorldSpaceViewDir(positionWS);
 
-    float4 baseST = UNITY_ACCESS_INSTANCED_PROP(UnityPermaterial, _MainTex_ST);
+    float4 baseST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _MainTex_ST);
     output.uv = input.texcoord * baseST.xy + baseST.zw;
     output.color = input.color;
 
