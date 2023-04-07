@@ -10,15 +10,15 @@ Shader "THRenderer/THLight"
         _Metallic ("Metallic", range(0, 1)) = 0
         _CartoonFresnel ("Cartoon Fresnel", float) = 5
 
-        _OutlineColor ("Outlinee Color", color) = (0, 0, 0, 1)
+        _OutlineColor ("Outline Color", color) = (0, 0, 0, 1)
         _OutlineSize ("Out line size", float) = 1
 
         _CutOff ("Cut off", range(0, 1)) = 0.5
-        [Toggle(_CLIPPING)] _Clipping ("Enable Alpha Clipping", float) = 0
+        [Toggle(_CLIPPING)] _CLIPPING ("Enable Alpha Clipping", float) = 0
         [Toggle(_PREMULTIPLY_ALPHA)] _PREMULTIPLY_ALPHA ("Premultiply Alpha", float) = 0
         [Toggle(_AUTO_SCREEN_SIZE_OUTLINE)] _AUTO_SCREEN_SIZE_OUTLINE ("Auto Screen size Outline", float) = 0
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", float) = 1.0
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", float) = 0
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", float) = 10.0
         [Enum(UnityEngine.Rendering.CullMode)] _CullMode ("Cull Mode", float) = 1
         [Enum(off, 0, On, 1)] _ZWrite ("Z Write", float) = 1
     }

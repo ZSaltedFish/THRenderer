@@ -60,12 +60,13 @@ namespace ZKnight.THRenderer.Editor
             {
                 _ = materialEditor.ColorProperty(_materialProps["_OutlineColor"], "Outline color");
                 _ = materialEditor.FloatProperty(_materialProps["_OutlineSize"], "Outline size");
-                _ = KeywordCheckMark(mat, "_AUTO_SCREEN_SIZE_OUTLINE", "Auto Screen size Outline");
+                DrawDefaultGUI(materialEditor, "_AUTO_SCREEN_SIZE_OUTLINE", "Auto Screen size outline");
             }
 
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                var cut = KeywordCheckMark(mat, "_CLIPPING", "Enable Alpha Clipping");
+                DrawDefaultGUI(materialEditor, "_CLIPPING", "Clipping");
+                var cut = Array.IndexOf(mat.shaderKeywords, "_CLIPPING") != -1;
                 if (cut)
                 {
                     materialEditor.RangeProperty(_materialProps["_CutOff"], "Cut off");
@@ -86,9 +87,14 @@ namespace ZKnight.THRenderer.Editor
             }
         }
 
+        private void DrawDefaultGUI(MaterialEditor editor, string name, string label)
+        {
+            editor.ShaderProperty(_materialProps[name], label);
+        }
+
         private bool KeywordCheckMark(Material mat, string keyword, string label)
         {
-            var key = mat.IsKeywordEnabled(keyword);
+            var key = Array.IndexOf(mat.shaderKeywords, keyword) != -1;
             using (var check = new EditorGUI.ChangeCheckScope())
             {
                 key = EditorGUILayout.Toggle(label, key);
