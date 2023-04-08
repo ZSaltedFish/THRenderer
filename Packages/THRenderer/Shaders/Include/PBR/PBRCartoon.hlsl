@@ -12,6 +12,9 @@ struct PBRCartoon
     float metallic;
     float smoothness;
     float cartoonFresnel;
+#if defined (_SDF_SHADOW)
+    float shadowSDF;
+#endif
 };
 
 PBRCartoon GetPBRCartoon(THVaryings input)
@@ -40,6 +43,11 @@ PBRCartoon GetPBRCartoon(THVaryings input)
     cartoon.cartoonFresnel = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CartoonFresnel);
     cartoon.F0 = lerp(0.04.xxx, cartoon.baseColor.rgb, metallic);
     
+#if defined(_SDF_SHADOW)
+    cartoon.shadowSDF = SAMPLE_TEXTURE2D(_SDFTexture, sampler_SDFTexture, input.uv).r;
+#endif
+    
     return cartoon;
 }
+
 #endif

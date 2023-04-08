@@ -92,28 +92,6 @@ namespace ZKnight.THRenderer.Editor
             editor.ShaderProperty(_materialProps[name], label);
         }
 
-        private bool KeywordCheckMark(Material mat, string keyword, string label)
-        {
-            var key = Array.IndexOf(mat.shaderKeywords, keyword) != -1;
-            using (var check = new EditorGUI.ChangeCheckScope())
-            {
-                key = EditorGUILayout.Toggle(label, key);
-                if (check.changed)
-                {
-                    if (key)
-                    {
-                        mat.EnableKeyword(keyword);
-                    }
-                    else
-                    {
-                        mat.DisableKeyword(keyword);
-                    }
-                    EditorUtility.SetDirty(mat);
-                }
-            }
-            return key;
-        }
-
         private void InitMaterialProperties(MaterialProperty[] properties)
         {
             _materialProps = new Dictionary<string, MaterialProperty>();
