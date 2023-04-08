@@ -56,12 +56,29 @@ float3 DirectionLightFunction(float roughness, float3 F0, float3 mainLightColor,
     return BRDFSpeSection * mainLightColor * NdotL * PI;
 }
 
-float3 DiffuseLightFunction(float HdotL, float NdotL, float3 baseColor, float3 mainLightColor, float metallic, float shadow, float3 F0)
+#if defined(_SDF_SHADOW)
+float3 FaceDiffuseLightFunction(PBRCartoon cartoon, Light light, float HdotL)
+{
+    //float3 forwardDir = normalize(TransformObjectToWorldNormal(float3(0.0, 0.0, 1.0)));
+    //float3 rightDir = normalize(TransformObjectToWorldNormal(float3(1.0, 0.0, 0.0)));
+    
+    float2 horNormal = normalize(cartoon.normal.xz);
+    float2 horLight = normalize(light.direction.xz);
+    float NdotL = max(dot(horNormal, horLight), 1e-5);
+
+    float3 cartoonDiff = CartoonDiffuseEasy(step(cartoon.shadowSDF, NdotL), 1.0); //NdotL > cartoon.shadowSDF ? 1.0.xxx : 0.0.xxx;
+    float3 KS = PBR_F_Light_Function(HdotL, cartoon.F0);
+    float3 KD = (1 - KS) * (1 - cartoon.metallic);
+    return KD * cartoon.baseColor * light.color * cartoonDiff;
+}
+#endif
+
+float3 DiffuseLightFunction(float HdotL, float NdotL, float3 baseColor, float3 lightColor, float metallic, float shadow, float3 F0)
 {
     float3 KS = PBR_F_Light_Function(HdotL, F0);
     float3 KD = (1 - KS) * (1 - metallic);
     float3 cartoonDiff = CartoonDiffuseEasy(NdotL, shadow);
-    return KD * baseColor * mainLightColor * cartoonDiff;
+    return KD * baseColor * lightColor * cartoonDiff;
 }
 
 float3 IndireDiff_Function(float NdotV, float3 N, float metallic, float3 baseColor, float roughness, float occlusion, float3 F0, float3 ambient)
@@ -97,7 +114,12 @@ float3 DirectionLightCalc(PBRCartoon cartoon, Light light, float3 N, float3 V, f
 
     float shadow = light.shadowAttenuation * light.distanceAttenuation;
     float3 direLight = DirectionLightFunction(cartoon.roughness, cartoon.F0, light.color, HdotN, NdotL, NdotV, HdotL);
+    
+#if defined(_SDF_SHADOW)
+    float3 diffuseLight = FaceDiffuseLightFunction(cartoon, light, HdotL);
+#else
     float3 diffuseLight = DiffuseLightFunction(HdotL, NdotL, cartoon.baseColor, light.color, cartoon.metallic, shadow, cartoon.F0);
+#endif
 
     return direLight + diffuseLight;
 }
@@ -111,6 +133,7 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
     
     float NdotV = max(dot(N, V), 1e-5);
     float3 envColor = ReflectEEnvironment(cartoon.roughness, N);
+    
     float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, 1.0, cartoon.F0, ambient);
     float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, 1.0, cartoon.F0);
     float3 fresnel = CartoonFresnel(ambient, NdotV, cartoon.cartoonFresnel);
@@ -126,6 +149,9 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
         direLight += DirectionLightCalc(cartoon, additionalLight, N, V, NdotV);
     }
     
+//#if defined(_SDF_SHADOW)
+//    return float4(cartoon.shadowSDF.xxx, 1);
+//#endif
     return direLight + indireLight + indireSpecLight + fresnel;
 
 }

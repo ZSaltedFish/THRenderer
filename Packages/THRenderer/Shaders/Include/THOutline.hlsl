@@ -25,6 +25,7 @@ SAMPLER(sampler_MainTex);
 SAMPLER(sampler_ExtendTexture);
 
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
+UNITY_DEFINE_INSTANCED_PROP(float4, _Color);
 UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
 UNITY_DEFINE_INSTANCED_PROP(float4, _ExtendTexture_ST)
 UNITY_DEFINE_INSTANCED_PROP(float, _CutOff)
@@ -67,12 +68,14 @@ THVaryings OutlineVertex(THAttributes input)
 float4 OutlineFragment(THVaryings input) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(input);
+    float4 color = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
     float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
+    float4 baseColor = color * mainTex;
 
     clip(input.color.r - 0.0001);
 
 #if defined(_CLIPPING)
-    clip(mainTex.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CutOff));
+    clip(baseColor.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CutOff));
 #endif
     float4 outlineColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _OutlineColor);
     //return input.color;

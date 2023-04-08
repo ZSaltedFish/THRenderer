@@ -1,5 +1,5 @@
-#ifndef THPBR_INCLUDE
-#define THPBR_INCLUDE
+#ifndef TH_FACE_SOURCE_INCLUDE
+#define TH_FACE_SOURCE_INCLUDE
 
 #include "..\\THCommon.hlsl"
 #include "..\\TH_IO_Define.hlsl"
@@ -9,35 +9,16 @@ SAMPLER(sampler_MainTex);
 TEXTURE2D(_ShadowTex);
 SAMPLER(sampler_ShadowTex);
 
-#if _PBR_TEXTURE_USED
-TEXTURE2D(_PBRTex);
-SAMPLER(sampler_PBRTex);
-#endif
-
-#if defined(_SDF_SHADOW)
-TEXTURE2D(_SDFTexture);
-SAMPLER(sampler_SDFTexture);
-#endif
-
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
+UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
 UNITY_DEFINE_INSTANCED_PROP(float4, _ShadowTex_ST)
-UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+#if defined(_CLIPPING)
 UNITY_DEFINE_INSTANCED_PROP(float, _CutOff)
-UNITY_DEFINE_INSTANCED_PROP(float, _CartoonFresnel)
-#if _PBR_TEXTURE_USED
-UNITY_DEFINE_INSTANCED_PROP(float4, _PBRTex_ST)
-#else
-UNITY_DEFINE_INSTANCED_PROP(float, _Smoothness)
-UNITY_DEFINE_INSTANCED_PROP(float, _Metallic)
-#endif
-
-#if defined(_SDF_SHADOW)
-UNITY_DEFINE_INSTANCED_PROP(float4, _SDFTexture_ST)
 #endif
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 
-THVaryings PBRVertex(THAttributes input)
+THVaryings FaceVertex(THAttributes input)
 {
     THVaryings output = (THVaryings) 0;
 
@@ -58,20 +39,20 @@ THVaryings PBRVertex(THAttributes input)
     return output;
 }
 
-#include "PBRCartoon.hlsl"
-#include "PBRCartoonRendererFunction.hlsl"
-#include "PBRFunction.hlsl"
+#include "THFaceInput.hlsl"
+#include "THFaceFunction.hlsl"
 
-float4 PBRFragment(THVaryings input) : SV_TARGET
+float4 FaceFragment(THVaryings input) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(input);
-    PBRCartoon cartoon = GetPBRCartoon(input);
+    THFaceInput face = GetTHFaceInput(input);
     
 #if defined(_CLIPPING)
-    float cutoff = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CutOff);
-    clip(cartoon.baseColor.a - cutoff);
+    float c = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CutOff);
+    clip(face.baseColor - c);
 #endif
-    float3 lightColor = CartoonPBRRender(cartoon);
-    return float4(lightColor, cartoon.baseColor.a);
+    float3 diff = FaceRenderer(face);
+    return float4(diff, face.baseColor.a);
+
 }
 #endif
