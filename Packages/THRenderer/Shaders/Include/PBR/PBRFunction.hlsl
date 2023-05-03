@@ -130,9 +130,10 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
     
     float3 N = normalize(cartoon.normal);
     float3 V = normalize(cartoon.viewDir);
+    float3 reflectV = -reflect(V, N);
     
     float NdotV = max(dot(N, V), 1e-5);
-    float3 envColor = ReflectEEnvironment(cartoon.roughness, N);
+    float3 envColor = ReflectEEnvironment(cartoon.roughness, reflectV);
     
     float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, 1.0, cartoon.F0, ambient);
     float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, 1.0, cartoon.F0);
