@@ -74,4 +74,19 @@ float4 PBRFragment(THVaryings input) : SV_TARGET
     float3 lightColor = CartoonPBRRender(cartoon);
     return float4(lightColor, cartoon.baseColor.a);
 }
+
+float4 PBRFragmentVertexColor(THVaryings input) : SV_TARGET
+{
+    UNITY_SETUP_INSTANCE_ID(input);
+    PBRCartoon cartoon = GetPBRCartoon(input);
+
+    float4 mainColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
+    cartoon.baseColor = mainColor * input.color;
+#if defined(_CLIPPING)
+    float cutoff = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CutOff);
+    clip(cartoon.baseColor.a - cutoff);
+#endif
+    float3 lightColor = CartoonPBRRender(cartoon);
+    return float4(lightColor, cartoon.baseColor.a);
+}
 #endif
