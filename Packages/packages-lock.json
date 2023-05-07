@@ -101,6 +101,15 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.recorder": {
+      "version": "4.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.timeline": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.render-pipelines.core": {
       "version": "14.0.6",
       "depth": 1,
@@ -238,6 +247,15 @@
       "dependencies": {
         "com.unity.render-pipelines.universal": "1.0.0"
       }
+    },
+    "com.zknight.videorecorder": {
+      "version": "https://github.com/ZSaltedFish/VideoRecorder.git?path=Packages/Recorder",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.recorder": "4.0.0"
+      },
+      "hash": "de6bf83f5e574bc8a4f40d336e1128904646cec7"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
