@@ -11,6 +11,7 @@ struct PBRCartoon
     float roughness;
     float metallic;
     float smoothness;
+    float occlusion;
 #if defined (_FRESNEL_ENABLE)
     float cartoonFresnel;
 #endif
@@ -28,20 +29,28 @@ PBRCartoon GetPBRCartoon(THVaryings input)
     float3 pbrTex = SAMPLE_TEXTURE2D(_PBRTex, sampler_PBRTex, input.uv).rgb;
     float smoothness = pbrTex.r;
     float metallic = pbrTex.g;
+    float occlusion = pbrTex.b;
 #else
     float smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Smoothness);
     float metallic = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Metallic);
+    float occlusion = 1.0;
 #endif
     
     float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
     
     cartoon.baseColor = mainColor * mainTex;
+#if _NORMAL_TEX_ENABLE
+    float3 normalTS = UnpackNormal(SAMPLE_TEXTURE2D(_NormalTex, sampler_NormalTex, input.uv));
+    cartoon.normal = mul(normalTS, float3x3(input.tangentWS.xyz, input.bitTangentWS.xyz, input.normalWS.xyz));
+#else
     cartoon.normal = input.normalWS;
+#endif
     cartoon.position = input.positionWS;
     cartoon.viewDir = input.viewDirWS;
     cartoon.roughness = max(1 - smoothness, 0.05);
     cartoon.metallic = metallic;
     cartoon.smoothness = smoothness;
+    cartoon.occlusion = occlusion;
 #if defined (_FRESNEL_ENABLE)
     cartoon.cartoonFresnel = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CartoonFresnel);
 #endif

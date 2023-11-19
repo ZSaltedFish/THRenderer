@@ -135,8 +135,8 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
     float NdotV = max(dot(N, V), 1e-5);
     float3 envColor = ReflectEEnvironment(cartoon.roughness, reflectV);
     
-    float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, 1.0, cartoon.F0, ambient);
-    float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, 1.0, cartoon.F0);
+    float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, cartoon.occlusion, cartoon.F0, ambient);
+    float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, cartoon.occlusion, cartoon.F0);
 #if defined (_FRESNEL_ENABLE)
     float3 fresnel = CartoonFresnel(ambient, NdotV, cartoon.cartoonFresnel);
 #else 

@@ -45,7 +45,7 @@ namespace ZKnight.THRenderer.Editor
             {
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
-                    var pbrTex = materialEditor.TextureProperty(_materialProps["_PBRTex"], "PBR Texture (RG)");
+                    var pbrTex = materialEditor.TextureProperty(_materialProps["_PBRTex"], "PBR Texture (smo:RGB)");
                     if (check.changed)
                     {
                         if (pbrTex)
@@ -64,6 +64,26 @@ namespace ZKnight.THRenderer.Editor
                         materialEditor.RangeProperty(_materialProps["_Metallic"], "Metallic");
                     }
                 }
+            }
+
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                using (var changed = new EditorGUI.ChangeCheckScope())
+                {
+                    var normalTex = materialEditor.TextureProperty(_materialProps["_NormalTex"], "Normal Texture");
+                    if (changed.changed)
+                    {
+                        if (normalTex)
+                        {
+                            mat.EnableKeyword("_NORMAL_TEX_ENABLE");
+                        }
+                        else
+                        {
+                            mat.DisableKeyword("_NORMAL_TEX_ENABLE");
+                        }
+                    }
+                }
+
             }
 
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))

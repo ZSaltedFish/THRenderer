@@ -9,6 +9,11 @@ SAMPLER(sampler_MainTex);
 TEXTURE2D(_ShadowTex);
 SAMPLER(sampler_ShadowTex);
 
+#if _NORMAL_TEX_ENABLE
+TEXTURE2D(_NormalTex);
+SAMPLER(sampler_NormalTex);
+#endif
+
 #if _PBR_TEXTURE_USED
 TEXTURE2D(_PBRTex);
 SAMPLER(sampler_PBRTex);
@@ -34,6 +39,10 @@ UNITY_DEFINE_INSTANCED_PROP(float, _Smoothness)
 UNITY_DEFINE_INSTANCED_PROP(float, _Metallic)
 #endif
 
+#if _NORMAL_TEX_ENABLE
+UNITY_DEFINE_INSTANCED_PROP(float4, _NormalTex_ST)
+#endif
+
 #if defined(_SDF_SHADOW)
 UNITY_DEFINE_INSTANCED_PROP(float4, _SDFTexture_ST)
 #endif
@@ -52,6 +61,7 @@ THVaryings PBRVertex(THAttributes input)
     output.normalWS = TransformObjectToWorldNormal(input.normalOS);
     output.tangentWS = float4(TransformObjectToWorldNormal(input.tangentOS.xyz), 1);
     output.viewDirWS = GetWorldSpaceViewDir(positionWS);
+    output.bitTangentWS = cross (output.normalWS, output.tangentWS);
 
     float4 baseST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _MainTex_ST);
     output.uv = input.texcoord * baseST.xy + baseST.zw;

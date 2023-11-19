@@ -1,9 +1,10 @@
-Shader "THRenderer/THLight"
+Shader"THRenderer/THLight"
 {
     Properties
     {
         _Color ("Color", color) = (1, 1, 1, 1)
         _MainTex ("Input Texture", 2D) = "white" {}
+        _NormalTex ("Normal Texture", 2D) = "bump" {}
         _ShadowTex("Shadow Texture", 2D) = "gray" {}
         _PBRTex("PBR Texture", 2D) = "white" {}
         _Smoothness ("Smoothness", range(0, 1)) = 0.5
@@ -40,6 +41,7 @@ Shader "THRenderer/THLight"
             #pragma shader_feature_local _PBR_TEXTURE_USED
             #pragma shader_feature_local _CLIPPING
             #pragma shader_feature_local _FRESNEL_ENABLE
+			#pragma shader_feature_local _NORMAL_TEX_ENABLE
             #include "Include/PBR/THPBR.hlsl"
             #pragma vertex PBRVertex
             #pragma fragment PBRFragment

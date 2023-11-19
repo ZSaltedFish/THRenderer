@@ -21,6 +21,7 @@ struct THVaryings
     float4 positionCS   : SV_POSITION;
     float4 screenPos    : TEXCOORD5;
     float4 color        : TEXCOORD6;
+    float3 bitTangentWS : TEXCOORD7;
     
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
