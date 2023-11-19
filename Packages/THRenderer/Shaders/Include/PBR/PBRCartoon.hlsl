@@ -11,7 +11,9 @@ struct PBRCartoon
     float roughness;
     float metallic;
     float smoothness;
+#if defined (_FRESNEL_ENABLE)
     float cartoonFresnel;
+#endif
 #if defined (_SDF_SHADOW)
     float shadowSDF;
 #endif
@@ -40,13 +42,44 @@ PBRCartoon GetPBRCartoon(THVaryings input)
     cartoon.roughness = max(1 - smoothness, 0.05);
     cartoon.metallic = metallic;
     cartoon.smoothness = smoothness;
+#if defined (_FRESNEL_ENABLE)
     cartoon.cartoonFresnel = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _CartoonFresnel);
+#endif
     cartoon.F0 = lerp(0.04.xxx, cartoon.baseColor.rgb, metallic);
     
 #if defined(_SDF_SHADOW)
     cartoon.shadowSDF = SAMPLE_TEXTURE2D(_SDFTexture, sampler_SDFTexture, input.uv).r;
 #endif
     
+    return cartoon;
+}
+
+PBRCartoon GetRoadPBRCartoon(THVaryings input)
+{
+    PBRCartoon cartoon = (PBRCartoon)0;
+    float4 mainColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
+    float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
+#if _PBR_TEXTURE_USED
+    float3 pbrTex = SAMPLE_TEXTURE2D(_PBRTex, sampler_PBRTex, input.uv).rgb;
+    float smoothness = pbrTex.r;
+    float metallic = pbrTex.g;
+#else
+    float smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Smoothness);
+    float metallic = UNITY_ACCESS_INSTANCED_PROP(UNityPerMaterial, _Metallic);
+#endif
+    float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+    cartoon.baseColor = mainColor * mainTex;
+    cartoon.normal = input.normalWS;
+    cartoon.position = input.positionWS;
+    cartoon.viewDir = input.viewDirWS;
+    cartoon.roughness = max(1 - smoothness, 0.05);
+    cartoon.metallic = metallic;
+    cartoon.smoothness = smoothness;
+#if defined (_FRESNEL_ENABLE)
+    cartoon.cartoonFresnel = 1;
+#endif
+    cartoon.F0 = lerp(0.04.xxx, cartoon.baseColor.rgb, metallic);
+
     return cartoon;
 }
 

@@ -137,7 +137,11 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
     
     float3 indireLight = IndireDiff_Function(NdotV, N, cartoon.metallic, cartoon.baseColor, cartoon.roughness, 1.0, cartoon.F0, ambient);
     float3 indireSpecLight = IndireSpec_Function(envColor, cartoon.roughness, NdotV, 1.0, cartoon.F0);
+#if defined (_FRESNEL_ENABLE)
     float3 fresnel = CartoonFresnel(ambient, NdotV, cartoon.cartoonFresnel);
+#else 
+    float3 fresnel = float3(0, 0, 0);
+#endif
     
     float4 shadowCoord = TransformWorldToShadowCoord(cartoon.position);
     Light mainLight = GetMainLight(shadowCoord);
@@ -150,9 +154,6 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
         direLight += DirectionLightCalc(cartoon, additionalLight, N, V, NdotV);
     }
     
-//#if defined(_SDF_SHADOW)
-//    return float4(cartoon.shadowSDF.xxx, 1);
-//#endif
     return direLight + indireLight + indireSpecLight + fresnel;
 
 }

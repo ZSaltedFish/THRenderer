@@ -9,7 +9,6 @@ Shader "THRenderer/THLight"
         _Smoothness ("Smoothness", range(0, 1)) = 0.5
         _Metallic ("Metallic", range(0, 1)) = 0
         _CartoonFresnel ("Cartoon Fresnel", float) = 5
-
         _OutlineColor ("Outline Color", color) = (0, 0, 0, 1)
         _OutlineSize ("Out line size", float) = 1
 
@@ -17,6 +16,7 @@ Shader "THRenderer/THLight"
         [Toggle(_CLIPPING)] _CLIPPING ("Enable Alpha Clipping", float) = 0
         [Toggle(_PREMULTIPLY_ALPHA)] _PREMULTIPLY_ALPHA ("Premultiply Alpha", float) = 0
         [Toggle(_AUTO_SCREEN_SIZE_OUTLINE)] _AUTO_SCREEN_SIZE_OUTLINE ("Auto Screen size Outline", float) = 0
+        [Toggle(_FRESNEL_ENABLE)] _FRESNEL_ENABLE ("Fresnel enable", float) = 1
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", float) = 1.0
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", float) = 10.0
         [Enum(UnityEngine.Rendering.CullMode)] _CullMode ("Cull Mode", float) = 1
@@ -39,6 +39,7 @@ Shader "THRenderer/THLight"
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma shader_feature_local _PBR_TEXTURE_USED
             #pragma shader_feature_local _CLIPPING
+            #pragma shader_feature_local _FRESNEL_ENABLE
             #include "Include/PBR/THPBR.hlsl"
             #pragma vertex PBRVertex
             #pragma fragment PBRFragment
