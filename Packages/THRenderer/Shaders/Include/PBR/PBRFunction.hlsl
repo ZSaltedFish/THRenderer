@@ -127,7 +127,6 @@ float3 DirectionLightCalc(PBRCartoon cartoon, Light light, float3 N, float3 V, f
 float3 CartoonPBRRender(PBRCartoon cartoon)
 {
     float3 ambient = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
-    
     float3 N = normalize(cartoon.normal);
     float3 V = normalize(cartoon.viewDir);
     float3 reflectV = -reflect(V, N);
@@ -153,7 +152,6 @@ float3 CartoonPBRRender(PBRCartoon cartoon)
         Light additionalLight = GetAdditionalLight(i, cartoon.position);
         direLight += DirectionLightCalc(cartoon, additionalLight, N, V, NdotV);
     }
-    
     return direLight + indireLight + indireSpecLight + fresnel;
 
 }
